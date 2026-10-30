@@ -1,0 +1,14 @@
+{
+  "expo": {
+    "name": "منصة علي صالح",
+    "slug": "ali-saleh-platform",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "platforms": ["ios", "android", "web"],
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    }
+  }
+}
