@@ -17,7 +17,7 @@ export default function App() {
 
   const handleRegister = () => {
     if (!studentName || !studentPhone || !parentPhone) {
-      Alert.alert('تنبيه', 'يرجى ملء الحقول الأساسية (الاسم ورقام الهواتف)');
+      Alert.alert('تنبيه', 'يرجى ملء الحقول الأساسية (الاسم وأرقام الهواتف)');
       return;
     }
     Alert.alert('تم التسجيل بنجاح', `أهلاً بك يا ${studentName} في منصة أستاذ علي صالح جودة`);
