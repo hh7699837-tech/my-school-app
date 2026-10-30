@@ -1,87 +1,51 @@
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f5f7fa' },
-  welcomeContainer: { flex: 1, backgroundColor: '#1e3d59', justifyContent: 'center', alignItems: 'center', padding: 20 },
-  welcomeCard: { backgroundColor: '#ffffff', width: '100%', padding: 25, borderRadius: 16, alignItems: 'center', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 5, elevation: 8 },
-  welcomeTitle: { fontSize: 22, fontWeight: 'bold', color: '#1e3d59', textAlign: 'center', marginBottom: 10 },
-  welcomeSubtitle: { fontSize: 14, color: '#e8a87c', fontWeight: '600', marginBottom: 15 },
-  welcomeDesc: { fontSize: 14, color: '#555', textAlign: 'center', marginBottom: 25 },
-  welcomeButton: { backgroundColor: '#17b978', paddingVertical: 12, paddingHorizontal: 30, borderRadius: 8, width: '100%', alignItems: 'center' },
-  welcomeButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  header: { backgroundColor: '#1e3d59', padding: 25, alignItems: 'center', borderBottomLeftRadius: 20, borderBottomRightRadius: 20, position: 'relative' },
-  backButton: { position: 'absolute', left: 20, top: 30 },
-  headerTitle: { color: '#fff', fontSize: 20, fontWeight: 'bold', marginTop: 5 },
-  headerSubtitle: { color: '#e8a87c', fontSize: 13, marginTop: 5 },
-  sectionTitleContainer: { paddingHorizontal: 20, marginTop: 20, marginBottom: 10 },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#333' },
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', paddingHorizontal: 20 },
-  card: { backgroundColor: '#fff', width: '48%', padding: 20, borderRadius: 12, alignItems: 'center', marginBottom: 15, shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 3, elevation: 3 },
-  cardText: { marginTop: 10, fontSize: 14, fontWeight: 'bold', color: '#1e3d59' },
-  formContainer: { padding: 20 },
-  label: { fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 8, marginTop: 12 },
-  input: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#ddd', borderRadius: 8, padding: 12, fontSize: 14, color: '#333' },
-  submitButton: { backgroundColor: '#17b978', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 25 },
-  submitButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-  listContainer: { padding: 20 },
-  bookCard: { backgroundColor: '#fff', borderRadius: 12, padding: 16, marginBottom: 15, elevation: 3 },
-  bookInfo: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  bookTitle: { fontSize: 16, fontWeight: 'bold', color: '#1e3d59' },
-  bookSubject: { fontSize: 12, color: '#777', marginTop: 2 },
-  downloadButton: { backgroundColor: '#1e3d59', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 8, borderRadius: 6 },
-  downloadText: { color: '#fff', fontWeight: 'bold', marginLeft: 6, fontSize: 13 },
-});
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, StatusBar, Linking } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, SafeAreaView, StatusBar } from 'react-native';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState('welcome');
-  const [students, setStudents] = useState([
-    { id: 1, name: 'علي حسن', phone: '07700000000', parentPhone: '07800000000', branch: 'حاسبات', average: 92.5, rank: 1 },
-    { id: 2, name: 'فاطمة حسين', phone: '07711111111', parentPhone: '07811111111', branch: 'أمن سيبراني', average: 88.0, rank: 2 },
-  ]);
-
-  const [books, setBooks] = useState([
-    { id: '1', title: 'ملزمة صيانة الحاسوب', subject: 'قسم الحاسوب', link: 'https://example.com/book1.pdf' },
-    { id: '2', title: 'أساسيات الأمن السيبراني', subject: 'قسم الأمن السيبراني', link: 'https://example.com/book2.pdf' },
-    { id: '3', title: 'مبادئ البرمجة والتطبيقات', subject: 'عام', link: 'https://example.com/book3.pdf' },
-  ]);
-
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+  const [studentName, setStudentName] = useState('');
+  const [studentPhone, setStudentPhone] = useState('');
   const [parentPhone, setParentPhone] = useState('');
-  const [branch, setBranch] = useState('حاسبات');
+  const [idFront, setIdFront] = useState('');
+  const [idBack, setIdBack] = useState('');
+  
+  // حقول بوت الذكاء الاصطناعي والتواصل
+  const [aiQuery, setAiQuery] = useState('');
+  const [aiResponse, setAiResponse] = useState('مرحباً بك! أنا مساعد الذكاء الاصطناعي، كيف يمكنني مساعدتك في دراستك اليوم؟');
+  const [adminMessage, setAdminMessage] = useState('');
+  const [supervisorMessage, setSupervisorMessage] = useState('');
 
   const handleRegister = () => {
-    if (!name.trim()  !phone.trim()  !parentPhone.trim()) {
-      Alert.alert('خطأ', 'يرجى ملء جميع الحقول المطلوبة');
+    if (!studentName || !studentPhone || !parentPhone) {
+      Alert.alert('تنبيه', 'يرجى ملء الحقول الأساسية (الاسم ورقام الهواتف)');
       return;
     }
-    const newStudent = {
-      id: Date.now().toString(),
-      name,
-      phone,
-      parentPhone,
-      branch,
-      average: 'قيد التقييم',
-      rank: 'جديد',
-    };
-    setStudents([...students, newStudent]);
-    Alert.alert('نجاح', 'تم تسجيل الطالب بنجاح');
-    setName('');
-    setPhone('');
-    setParentPhone('');
-    setCurrentScreen('home');
+    Alert.alert('تم التسجيل بنجاح', `أهلاً بك يا ${studentName} في منصة أستاذ علي صالح جودة`);
+    setCurrentScreen('dashboard');
   };
 
-  const openPdf = (url) => {
-    Linking.openURL(url).catch(() => {
-      Alert.alert('تنبيه', 'سيكون رابط تنزيل الملف متاحاً فور رفعه من الأستاذ.');
-    });
+  const handleAskAI = () => {
+    if (!aiQuery) return;
+    setAiResponse(`جاري تحليل سؤالك (${aiQuery})... الإجابة: هذا استفسار ممتاز في المنهج، تابع معنا المحاضرة الخاصة بهذا القسم لتفاصيل أكثر.`);
+    setAiQuery('');
   };
 
+  const handleSendAdmin = () => {
+    if (!adminMessage) return;
+    Alert.alert('تم الإرسال', 'تم إرسال رسالتك إلى إدارة المنصة بنجاح.');
+    setAdminMessage('');
+  };
+
+  const handleSendSupervisor = () => {
+    if (!supervisorMessage) return;
+    Alert.alert('تم الإرسال', 'تم إرسال رسالتك إلى مشرف المنصة (حسين كاظم جودة) بنجاح.');
+    setSupervisorMessage('');
+  };
+
+  // 1. شاشة الترحيب
   if (currentScreen === 'welcome') {
     return (
-      <View style={styles.welcomeContainer}>
+      <SafeAreaView style={styles.welcomeContainer}>
         <StatusBar barStyle="light-content" backgroundColor="#1e3d59" />
         <View style={styles.welcomeCard}>
           <Text style={styles.welcomeTitle}>منصة أستاذ علي صالح جودة التعليمية</Text>
@@ -89,146 +53,190 @@ export default function App() {
           <Text style={styles.welcomeDesc}>مرحباً بك في المنصة الرسمية لرفع الكتب والمراجع والدروس.</Text>
           
           <TouchableOpacity 
-            style={styles.welcomeButton} 
-            onPress={() => setCurrentScreen('home')}
-          >
-            <Text style={styles.welcomeButtonText}>اضغط للبدء</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-
-  if (currentScreen === 'home') {
-    return (
-      <ScrollView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor="#1e3d59" />
-        
-        <View style={styles.header}>
-          <Ionicons name="school" size={40} color="#fff" />
-          <Text style={styles.headerTitle}>منصة أستاذ علي صالح جودة</Text>
-          <Text style={styles.headerSubtitle}>إعداد وإشراف: حسين كاظم جودة</Text>
-        </View>
-
-        <View style={styles.sectionTitleContainer}>
-          <Text style={styles.sectionTitle}>القائمة الرئيسية</Text>
-        </View>
-
-        <View style={styles.gridContainer}>
-          <TouchableOpacity 
-            style={styles.card} 
+            style={styles.welcomeButton}
             onPress={() => setCurrentScreen('register')}
           >
-            <Ionicons name="person-add-outline" size={32} color="#1e3d59" />
-            <Text style={styles.cardText}>تسجيل الطالب</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            style={styles.card} 
-            onPress={() => setCurrentScreen('books')}
-          >
-            <Ionicons name="document-text-outline" size={32} color="#1e3d59" />
-            <Text style={styles.cardText}>الكتب والملازم</Text>
-          </TouchableOpacity>
-<TouchableOpacity style={styles.card} onPress={() => Alert.alert('قريباً', 'قسم صفحة الطالب قيد التطوير')}>
-            <Ionicons name="id-card-outline" size={32} color="#1e3d59" />
-            <Text style={styles.cardText}>صفحة الطالب</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card} onPress={() => Alert.alert('قريباً', 'قسم الدورات قيد التطوير')}>
-            <Ionicons name="book-outline" size={32} color="#1e3d59" />
-            <Text style={styles.cardText}>الدورات والدروس</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card} onPress={() => Alert.alert('قريباً', 'قسم الدرجات قيد التطوير')}>
-            <Ionicons name="stats-chart-outline" size={32} color="#1e3d59" />
-            <Text style={styles.cardText}>الدرجات</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.card} onPress={() => Alert.alert('قريباً', 'قسم الاختبارات الإلكترونية قيد التطوير')}>
-            <Ionicons name="checkmark-done-circle-outline" size={32} color="#1e3d59" />
-            <Text style={styles.cardText}>الاختبارات</Text>
+            <Text style={styles.welcomeButtonText}>ابدأ الانضمام والتسجيل</Text>
           </TouchableOpacity>
         </View>
-      </ScrollView>
+      </SafeAreaView>
     );
   }
 
-  if (currentScreen === 'books') {
+  // 2. شاشة التسجيل
+  if (currentScreen === 'register') {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity style={styles.backButton} onPress={() => setCurrentScreen('home')}>
-            <Ionicons name="arrow-back" size={24} color="#fff" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>الكتب والملازم الدراسية</Text>
-          <Text style={styles.headerSubtitle}>إشراف: حسين كاظم جودة</Text>
-        </View>
+      <ScrollView contentContainerStyle={styles.container}>
+        <Text style={styles.headerTitle}>تسجيل طالب جديد</Text>
+        <Text style={styles.subHeader}>املأ البيانات بدقة لإتمام الانضمام للمنصة</Text>
 
-        <View style={styles.listContainer}>
-          {books.map((book) => (
-            <View key={book.id} style={styles.bookCard}>
-              <View style={styles.bookInfo}>
-                <Ionicons name="document-attach" size={30} color="#1e3d59" />
-                <View style={{ marginLeft: 12, flex: 1 }}>
-                  <Text style={styles.bookTitle}>{book.title}</Text>
-                  <Text style={styles.bookSubject}>{book.subject}</Text>
-                </View>
-              </View>
-              <TouchableOpacity style={styles.downloadButton} onPress={() => openPdf(book.link)}>
-                <Ionicons name="cloud-download-outline" size={20} color="#fff" />
-                <Text style={styles.downloadText}>تحميل PDF</Text>
-              </TouchableOpacity>
-            </View>
-          ))}
+        <View style={styles.formCard}>
+          <Text style={styles.label}>اسم الطالب الرباعي:</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="ادخل اسمك الرباعي..." 
+            value={studentName}
+            onChangeText={setStudentName}
+          />
+
+          <Text style={styles.label}>رقم الطالب:</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="07xxxxxxxx" 
+            keyboardType="phone-pad"
+            value={studentPhone}
+            onChangeText={setStudentPhone}
+          />
+
+          <Text style={styles.label}>رقم ولي الأمر:</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="07xxxxxxxx" 
+            keyboardType="phone-pad"
+            value={parentPhone}
+            onChangeText={setParentPhone}
+          />
+
+          <Text style={styles.label}>رابط أو صورة البطاقة الموحدة (الوجه الأمامي):</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="ارفاق رابط أو اسم صورة الوجه الأمامي" 
+            value={idFront}
+            onChangeText={setIdFront}
+          />
+
+          <Text style={styles.label}>رابط أو صورة البطاقة الموحدة (الوجه الخلفي):</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="ارفاق رابط أو اسم صورة الوجه الخلفي" 
+            value={idBack}
+            onChangeText={setIdBack}
+          />
+
+          <TouchableOpacity style={styles.submitButton} onPress={handleRegister}>
+            <Text style={styles.submitButtonText}>إتمام التسجيل والدخول</Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     );
   }
 
+  // 3. لوحة التحكم الرئيسية والأقسام والذكاء الاصطناعي
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => setCurrentScreen('home')}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.dashboardHeader}>
+        <Text style={styles.dashTitle}>منصة أستاذ علي صالح جودة</Text>
+        <Text style={styles.dashSub}>مرحباً بك: {studentName || 'الطالب'}</Text>
+        <TouchableOpacity style={styles.backBtn} onPress={() => setCurrentScreen('welcome')}>
+          <Text style={styles.backBtnText}>الرئيسية</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>تسجيل طالب جديد</Text>
       </View>
 
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>اسم الطالب الكامل</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="أدخل اسم الطالب..."
-          placeholderTextColor="#888"
-          value={name}
-          onChangeText={setName}
-        />
+      {/* الأقسام الدراسية */}
+      <Text style={styles.sectionHeading}>الأقسام والخدمات التعليمية</Text>
+      <View style={styles.gridContainer}>
+        <View style={styles.gridCard}>
+          <Text style={styles.gridCardTitle}>📚 الملازم والكتب</Text>
+          <Text style={styles.gridCardText}>تحميل المناهج الدراسية بصيغة PDF</Text>
+        </View>
+        <View style={styles.gridCard}>
+          <Text style={styles.gridCardTitle}>📊 الحضور والغياب</Text>
+          <Text style={styles.gridCardText}>متابعة التواجد اليومي للطلبة</Text>
+        </View>
+        <View style={styles.gridCard}>
+          <Text style={styles.gridCardTitle}>💻 قسم الحاسبات</Text>
+          <Text style={styles.gridCardText}>دروس البرمجة والصيانة والتقنية</Text>
+        </View>
+        <View style={styles.gridCard}>
+          <Text style={styles.gridCardTitle}>🛡️ الأمن السيبراني</Text>
+          <Text style={styles.gridCardText}>أساسيات الحماية وأمن المعلومات</Text>
+        </View>
+      </View>
 
-        <Text style={styles.label}>رقم هاتف الطالب</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="07xxxxxxxx"
-          placeholderTextColor="#888"
-          keyboardType="phone-pad"
-          value={phone}
-          onChangeText={setPhone}
+      {/* بوت الذكاء الاصطناعي */}
+      <View style={styles.aiCard}>
+        <Text style={styles.aiTitle}>🤖 مساعد الذكاء الاصطناعي (AI)</Text>
+        <Text style={styles.aiResponseText}>{aiResponse}</Text>
+        <TextInput 
+          style={styles.input} 
+          placeholder="اطرح سؤالك البرمجي أو العلمي هنا..." 
+          value={aiQuery}
+          onChangeText={setAiQuery}
         />
-
-        <Text style={styles.label}>رقم ولي الأمر</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="07xxxxxxxx"
-          placeholderTextColor="#888"
-          keyboardType="phone-pad"
-          value={parentPhone}
-          onChangeText={setParentPhone}
-        />
-
-        <TouchableOpacity style={styles.submitButton} onPress={handleRegister}>
-          <Text style={styles.submitButtonText}>حفظ وتسجيل الطالب</Text>
+        <TouchableOpacity style={styles.aiButton} onPress={handleAskAI}>
+          <Text style={styles.submitButtonText}>إرسال السؤال للبوت</Text>
         </TouchableOpacity>
+      </View>
+
+      {/* مراسلة الإدارة ومشرف المنصة */}
+      <View style={styles.contactContainer}>
+        <View style={styles.contactBox}>
+          <Text style={styles.label}>مراسلة إدارة المنصة:</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="اكتب رسالتك للإدارة..." 
+            value={adminMessage}
+            onChangeText={setAdminMessage}
+          />
+          <TouchableOpacity style={styles.submitButton} onPress={handleSendAdmin}>
+            <Text style={styles.submitButtonText}>إرسال للإدارة</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.contactBox}>
+          <Text style={styles.label}>مراسلة مشرف المنصة (حسين كاظم):</Text>
+          <TextInput 
+            style={styles.input} 
+            placeholder="استفسار تقني أو مشكلة بالتطبيق..." 
+            value={supervisorMessage}
+            onChangeText={setSupervisorMessage}
+          />
+          <TouchableOpacity style={[styles.submitButton, { backgroundColor: '#e8a87c' }]} onPress={handleSendSupervisor}>
+            <Text style={[styles.submitButtonText, { color: '#1e3d59' }]}>إرسال للمشرف التقني</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  welcomeContainer: { flex: 1, backgroundColor: '#1e3d59', justifyContent: 'center', alignItems: 'center', padding: 20 },
+  welcomeCard: { backgroundColor: '#ffffff', width: '100%', padding: 25, borderRadius: 15, alignItems: 'center', shadowColor: '#000', shadowOpacity: 0.2, elevation: 5 },
+  welcomeTitle: { fontSize: 22, fontWeight: 'bold', color: '#1e3d59', textAlign: 'center', marginBottom: 10 },
+  welcomeSubtitle: { fontSize: 14, color: '#e8a87c', fontWeight: '600', marginBottom: 15, textAlign: 'center' },
+  welcomeDesc: { fontSize: 14, color: '#555', textAlign: 'center', marginBottom: 25 },
+  welcomeButton: { backgroundColor: '#17b978', paddingVertical: 12, paddingHorizontal: 25, borderRadius: 8, width: '100%', alignItems: 'center' },
+  welcomeButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+
+  container: { padding: 20, backgroundColor: '#f5f7fa', flexGrow: 1 },
+  headerTitle: { fontSize: 20, fontWeight: 'bold', color: '#1e3d59', textAlign: 'center', marginBottom: 5 },
+  subHeader: { fontSize: 13, color: '#e8a87c', textAlign: 'center', marginBottom: 20 },
+  
+  formCard: { backgroundColor: '#fff', padding: 20, borderRadius: 12, shadowColor: '#000', shadowOpacity: 0.1, elevation: 3, marginBottom: 20 },
+  label: { fontSize: 14, fontWeight: '600', color: '#333', marginBottom: 8, marginTop: 10 },
+  input: { borderWidth: 1, borderColor: '#ddd', backgroundColor: '#fff', padding: 12, borderRadius: 8, fontSize: 14, marginBottom: 10 },
+  
+  submitButton: { backgroundColor: '#17b978', padding: 15, borderRadius: 8, alignItems: 'center', marginTop: 15 },
+  submitButtonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
+
+  dashboardHeader: { backgroundColor: '#1e3d59', padding: 20, borderRadius: 12, marginBottom: 20, alignItems: 'center' },
+  dashTitle: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginBottom: 5 },
+  dashSub: { fontSize: 13, color: '#e8a87c', marginBottom: 10 },
+  backBtn: { backgroundColor: '#e8a87c', paddingVertical: 6, paddingHorizontal: 15, borderRadius: 6 },
+  backBtnText: { color: '#1e3d59', fontSize: 12, fontWeight: 'bold' },
+
+  sectionHeading: { fontSize: 16, fontWeight: 'bold', color: '#1e3d59', marginBottom: 12, textAlign: 'right' },
+  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 20 },
+  gridCard: { width: '48%', backgroundColor: '#fff', padding: 15, borderRadius: 10, marginBottom: 15, shadowColor: '#000', shadowOpacity: 0.05, elevation: 2 },
+  gridCardTitle: { fontSize: 14, fontWeight: 'bold', color: '#1e3d59', marginBottom: 5 },
+  gridCardText: { fontSize: 12, color: '#666' },
+
+  aiCard: { backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 20, borderWidth: 1, borderColor: '#17b978' },
+  aiTitle: { fontSize: 15, fontWeight: 'bold', color: '#17b978', marginBottom: 10 },
+  aiResponseText: { fontSize: 13, color: '#444', backgroundColor: '#f0f9f4', padding: 10, borderRadius: 8, marginBottom: 10 },
+  aiButton: { backgroundColor: '#1e3d59', padding: 12, borderRadius: 8, alignItems: 'center' },
+
+  contactContainer: { marginBottom: 30 },
+  contactBox: { backgroundColor: '#fff', padding: 15, borderRadius: 12, marginBottom: 15, shadowColor: '#000', shadowOpacity: 0.05, elevation: 2 }
+});
