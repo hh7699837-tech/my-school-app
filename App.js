@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, View, TextInput, TouchableOpacity, ScrollView, Alert, SafeAreaView } from 'react-native';
 import { createClient } from '@supabase/supabase-js';
 
-// إعداد اتصال Supabase (تأكد من مطابقة الروابط إذا لزم الأمر)
 const SUPABASE_URL = 'https://mrimlrxgnromjufqhyga.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yaW1scnhnbnJvbWp1ZnFoeWdhIiwicm9sZSI6ImFub24iLCJpYXQiOjV...'; // استبدله بالمفتاح الخاص بك إذا احتجت
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1yaW1scnhnbnJvbWp1ZnFoeWdhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEyMTcwODF9.abc'; // استبدله بالمفتاح الصحيح إن احتجت
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 export default function App() {
@@ -14,12 +13,6 @@ export default function App() {
   const [parentPhone, setParentPhone] = useState('');
   const [department, setDepartment] = useState('التعليم المهني');
 
-  const [aiQuery, setAiQuery] = useState('');
-  const [aiResponse, setAiResponse] = useState('');
-  const [adminMessage, setAdminMessage] = useState('');
-  const [supervisorMessage, setSupervisorMessage] = useState('');
-
-  // دالة تسجيل الطالب وإرسال البيانات إلى Supabase
   const handleRegister = async () => {
     if (!studentName || !studentPhone || !parentPhone) {
       Alert.alert('تنبيه', 'يرجى ملء الحقول الأساسية (الاسم وأرقام الهواتف)');
@@ -27,7 +20,7 @@ export default function App() {
     }
 
     try {
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('students')
         .insert([
           { 
@@ -39,37 +32,16 @@ export default function App() {
         ]);
 
       if (error) {
-        console.error('Supabase Error:', error);
-        Alert.alert('خطأ', 'فشل حفظ البيانات: ' + error.message);
+        Alert.alert('خطأ', 'فشل الحفظ: ' + error.message);
       } else {
-        Alert.alert('تم التسجيل بنجاح', `أهلاً بك ${studentName} في منصة أستاذ علي صالح جودة`);
+        Alert.alert('تم', 'تم تسجيل الطالب بنجاح وإرسال البيانات');
         setCurrentScreen('dashboard');
       }
     } catch (err) {
-      console.error('Catch Error:', err);
-      Alert.alert('خطأ', 'حدث خطأ غير متوقع أثناء الاتصال بقاعدة البيانات');
+      Alert.alert('خطأ', 'حدث خطأ في الاتصال بقاعدة البيانات');
     }
   };
 
-  const handleAskAI = () => {
-    if (!aiQuery) return;
-    setAiResponse('هذا استفسار ممتاز في المنهج. تابع معنا المحاضرة الخاصة بهذا القسم لتفاصيل أكثر.');
-    setAiQuery('');
-  };
-
-  const handleSendAdmin = () => {
-    if (!adminMessage) return;
-    Alert.alert('تم الإرسال', 'تم إرسال رسالتك إلى إدارة المنصة بنجاح.');
-    setAdminMessage('');
-  };
-
-  const handleSendSupervisor = () => {
-    if (!supervisorMessage) return;
-    Alert.alert('تم الإرسال', 'تم إرسال رسالتك إلى مشرف المنصة (حسين كاظم جودة) بنجاح.');
-    setSupervisorMessage('');
-  };
-
-  // شاشة الترحيب والتسجيل
   if (currentScreen === 'welcome') {
     return (
       <SafeAreaView style={styles.welcomeContainer}>
@@ -116,7 +88,6 @@ export default function App() {
     );
   }
 
-  // شاشة لوحة التحكم بعد التسجيل
   return (
     <View style={styles.dashboardContainer}>
       <Text style={styles.welcomeUserText}>أهلاً بك، {studentName} في لوحة التحكم</Text>
